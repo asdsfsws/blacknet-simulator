@@ -1,0 +1,547 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLACKNET | 블랙넷</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Noto+Sans+KR:wght@400;600;800&display=swap');
+
+:root {
+  --green:#00ff88;
+  --bg:#050907;
+  --panel:#0a120e;
+  --border:#17432d;
+  --muted:#7a9b87;
+  --red:#ff4567;
+  --yellow:#ffd166;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--bg);
+  color:#d9fbe7;
+  font-family:'Noto Sans KR',sans-serif;
+}
+button,input { font:inherit; }
+button { cursor:pointer; }
+header {
+  padding:22px 5%;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap;
+  background:#070d09;
+}
+.logo {
+  font:800 29px 'Orbitron',sans-serif;
+  color:var(--green);
+  letter-spacing:3px;
+  text-shadow:0 0 18px #00ff8870;
+}
+.logo small {
+  display:block;
+  font:11px 'Noto Sans KR',sans-serif;
+  letter-spacing:5px;
+  margin-top:6px;
+}
+.status { color:var(--green); font-size:12px; }
+.status:before { content:"● "; animation:blink 1s infinite; }
+@keyframes blink { 50% { opacity:.3; } }
+main { max-width:1250px; margin:auto; padding:28px 20px 55px; }
+.hero {
+  padding:30px;
+  border:1px solid var(--border);
+  background:radial-gradient(ellipse at top right,#063b22,transparent 55%),var(--panel);
+  margin-bottom:22px;
+}
+.eyebrow { color:var(--green); font-size:11px; letter-spacing:3px; }
+h1 { font:800 clamp(27px,5vw,46px) 'Orbitron',sans-serif; margin:12px 0; }
+h1 span { color:var(--green); }
+.hero p { color:#9bb8a5; line-height:1.8; }
+.stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:22px; }
+.stat,.panel { background:var(--panel); border:1px solid var(--border); }
+.stat { padding:18px; }
+.stat-label { color:var(--muted); font-size:12px; }
+.stat-value { font:600 24px 'Orbitron',sans-serif; color:var(--green); margin-top:9px; }
+.stat-value small { font:12px 'Noto Sans KR',sans-serif; color:var(--muted); }
+.layout { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr); gap:18px; }
+.panel { padding:22px; margin-bottom:18px; min-width:0; }
+.panel-title {
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:18px;
+  font-size:16px; font-weight:800;
+}
+.panel-title span { color:var(--green); font:11px 'Orbitron',sans-serif; }
+.mission { border:1px solid #204d34; background:#08100b; padding:18px; margin-bottom:14px; }
+.mission:hover { border-color:var(--green); }
+.mission-top { display:flex; justify-content:space-between; gap:10px; align-items:center; }
+.mission h3 { margin:10px 0; font-size:17px; }
+.mission p { color:#9bb8a5; line-height:1.75; font-size:13px; }
+.reward { color:var(--yellow); font-size:12px; }
+.tag { font-size:10px; color:var(--green); border:1px solid #17683e; padding:4px 7px; }
+.btn {
+  border:1px solid var(--green); background:var(--green); color:#001b0c;
+  font-weight:800; padding:11px 15px; transition:.2s;
+}
+.btn:hover { background:transparent; color:var(--green); }
+.btn:disabled { opacity:.4; cursor:not-allowed; }
+.btn.secondary { background:transparent; color:var(--green); }
+.btn.full { width:100%; }
+.btn.small { padding:7px 10px; font-size:12px; }
+.terminal {
+  background:#020503; border:1px solid #1c5033; padding:17px;
+  min-height:150px; font:12px/1.9 monospace; color:var(--green); overflow-wrap:anywhere;
+}
+.terminal .muted { color:#678a73; }
+.terminal .white { color:#e2ffe9; }
+#missionArea { display:none; }
+#missionArea.active { display:block; animation:appear .3s ease; }
+@keyframes appear { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.question { font-size:14px; line-height:1.9; margin:18px 0; }
+.codebox {
+  background:#020503; border-left:3px solid var(--green); padding:15px;
+  color:var(--green); font:14px/1.9 monospace; white-space:pre-wrap;
+}
+.answer-row { display:flex; gap:8px; margin-top:15px; }
+.answer-row input {
+  min-width:0; flex:1; background:#030704; border:1px solid #28543a;
+  padding:12px; color:white;
+}
+.feedback { min-height:28px; font-size:13px; margin-top:12px; }
+.good { color:var(--green); animation:appear .25s; }
+.bad { color:var(--red); animation:shake .25s; }
+@keyframes shake { 25% { transform:translateX(-4px); } 75% { transform:translateX(4px); } }
+.progress { height:6px; background:#15251b; margin-top:12px; }
+.progress div { height:100%; background:var(--green); transition:width .3s; }
+.shop-item {
+  display:flex; justify-content:space-between; align-items:center;
+  gap:12px; padding:14px 0; border-bottom:1px solid #183324;
+}
+.shop-item:last-child { border-bottom:0; }
+.shop-item h4 { margin:0 0 6px; font-size:13px; }
+.shop-item p { margin:0; color:var(--muted); font-size:11px; line-height:1.6; }
+.price { color:var(--yellow); font-size:12px; margin-top:6px; }
+.inventory { color:var(--green); font-size:11px; margin-top:5px; }
+.logline { color:#83b99a; font-size:12px; line-height:1.9; }
+footer { text-align:center; color:#53705d; font-size:11px; padding:20px; border-top:1px solid var(--border); }
+.toast {
+  position:fixed; right:20px; bottom:20px; z-index:10;
+  background:#0a1b10; border:1px solid var(--green); color:var(--green);
+  padding:14px 18px; max-width:calc(100% - 40px); box-shadow:0 0 25px #00ff8820;
+}
+.toast.hidden { display:none; }
+@media(max-width:780px) {
+  .layout { grid-template-columns:1fr; }
+  .stats { grid-template-columns:repeat(2,1fr); }
+  .hero { padding:22px; }
+  header { padding:18px 20px; }
+}
+@media(max-width:390px) {
+  .stat { padding:13px; }
+  .stat-value { font-size:20px; }
+  .panel { padding:15px; }
+  .answer-row { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">BLACKNET<small>블랙넷 비밀 네트워크</small></div>
+  <div class="status">시스템 온라인</div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">비밀 네트워크에 오신 것을 환영합니다</div>
+    <h1>당신의 한계에 <span>접속하라.</span></h1>
+    <p>암호를 풀고 경험을 쌓아 최고의 네트워크 요원이 되세요.<br>
+    모든 미션은 가상의 퍼즐이며 실제 시스템에 접속하지 않습니다.</p>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><div class="stat-label">현재 레벨</div><div class="stat-value">LV.<b id="level">1</b></div></div>
+    <div class="stat"><div class="stat-label">보유 자금</div><div class="stat-value"><b id="money">100</b><small> N₩</small></div></div>
+    <div class="stat"><div class="stat-label">경험치</div><div class="stat-value"><b id="xp">0</b><small> XP</small></div><div class="progress"><div id="xpBar"></div></div></div>
+    <div class="stat"><div class="stat-label">해결한 미션</div><div class="stat-value"><b id="solved">0</b><small> 개</small></div></div>
+  </section>
+
+  <div class="layout">
+    <div>
+      <section class="panel">
+        <div class="panel-title">작전 터미널 <span>TERMINAL_01</span></div>
+        <div class="terminal">
+          <div class="muted">[BLACKNET 보안 시스템 v3.8]</div>
+          <div class="muted">[가상 환경 초기화 완료]</div>
+          <div class="white" id="typing"></div>
+          <div>요원@블랙넷:~$ <span>_</span></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">암호 해독 미션 <span>MISSIONS</span></div>
+        <div id="missionList"></div>
+        <div id="missionArea">
+          <div class="panel-title" style="margin-top:22px">현재 작전 <span id="missionCode">MISSION</span></div>
+          <div class="question" id="question"></div>
+          <div class="codebox" id="puzzle"></div>
+          <div class="answer-row">
+            <input id="answer" autocomplete="off" placeholder="정답을 입력하세요">
+            <button class="btn" id="submitAnswer">정답 확인</button>
+          </div>
+          <div class="feedback" id="feedback" aria-live="polite"></div>
+          <button class="btn secondary small" id="closeMission">미션 나가기</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">요원 기록 <span>ACTIVITY LOG</span></div>
+        <div id="activityLog" class="logline">[시스템] 요원 기록이 생성되었습니다.</div>
+      </section>
+    </div>
+
+    <aside>
+      <section class="panel">
+        <div class="panel-title">장비 상점 <span>BLACK MARKET</span></div>
+        <div class="shop-item">
+          <div><h4>01. 암호 해독 도구</h4><p>미션 보상 경험치 +5</p><div class="price">가격: 80 N₩</div><div class="inventory" id="toolOwned">보유: 0개</div></div>
+          <button class="btn small" data-item="tool">구매</button>
+        </div>
+        <div class="shop-item">
+          <div><h4>02. 고성능 단말기</h4><p>미션 성공 시 보상금 +20</p><div class="price">가격: 150 N₩</div><div class="inventory" id="deviceOwned">보유: 0개</div></div>
+          <button class="btn small" data-item="device">구매</button>
+        </div>
+        <div class="shop-item">
+          <div><h4>03. 보안 업그레이드</h4><p>요원 프로필을 꾸미는 특수 장비</p><div class="price">가격: 250 N₩</div><div class="inventory" id="securityOwned">보유: 0개</div></div>
+          <button class="btn small" data-item="security">구매</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">요원 프로필 <span>PROFILE</span></div>
+        <div class="shop-item"><div><h4>요원 코드</h4><p>NET-ROOKIE</p></div><span class="tag" id="rank">신입</span></div>
+        <div class="shop-item"><div><h4>다음 레벨까지</h4><p id="nextLevel">100 XP 필요</p></div></div>
+        <button class="btn secondary full" id="daily">접속 보너스 받기 (+50 N₩)</button>
+        <button class="btn secondary full" id="saveReset" style="margin-top:10px">진행 상황 초기화</button>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<footer>BLACKNET © 가상 해커 시뮬레이터 · 학습과 퍼즐을 위한 가상 환경</footer>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+const missions = [
+  {
+    id:1,title:"초급 · 숫자 암호",difficulty:"쉬움",
+    description:"블랙넷에 처음 접속한 요원에게 주어진 첫 번째 암호입니다.",
+    question:"각 알파벳은 영어 알파벳 순서의 숫자를 뜻합니다. 아래 숫자가 나타내는 단어는 무엇일까요?",
+    puzzle:"3 - 1 - 20",answer:"cat",reward:50,xp:30
+  },
+  {
+    id:2,title:"초급 · 뒤집힌 문자열",difficulty:"쉬움",
+    description:"뒤집힌 문자열을 원래 순서로 복구하세요.",
+    question:"아래 문자를 거꾸로 읽으면 어떤 영어 단어가 될까요?",
+    puzzle:"TEN",answer:"net",reward:70,xp:40
+  },
+  {
+    id:3,title:"중급 · 시저 암호",difficulty:"보통",
+    description:"알파벳을 일정한 칸 수만큼 이동시킨 암호입니다.",
+    question:"각 글자를 알파벳에서 1칸 앞으로 되돌리세요. 예: B → A",
+    puzzle:"DBU",answer:"cat",reward:100,xp:60
+  },
+  {
+    id:4,title:"중급 · 이진수 해독",difficulty:"보통",
+    description:"컴퓨터가 사용하는 2진수 암호를 풀어보세요.",
+    question:"8비트 이진수 01000001은 ASCII 문자로 무엇일까요? 대문자로 입력하세요.",
+    puzzle:"01000001",answer:"A",reward:120,xp:75
+  },
+  {
+    id:5,title:"고급 · 논리 추리",difficulty:"어려움",
+    description:"마지막 보안 퍼즐입니다. 규칙을 찾아내세요.",
+    question:"숫자 규칙을 찾아 물음표에 들어갈 숫자를 입력하세요.",
+    puzzle:"2, 4, 8, 16, ?",answer:"32",reward:180,xp:100
+  }
+];
+
+const freshState = () => ({
+  money:100,xp:0,solved:[],
+  owned:{tool:0,device:0,security:0},
+  dailyClaimed:false
+});
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem("blacknetSave"));
+    if (!s || typeof s !== "object") return freshState();
+    const fresh = freshState();
+    return {
+      ...fresh,
+      ...s,
+      money:Number.isFinite(s.money) ? Math.max(0,s.money) : 100,
+      xp:Number.isFinite(s.xp) ? Math.max(0,s.xp) : 0,
+      solved:Array.isArray(s.solved) ? s.solved.filter(id => missions.some(m => m.id === id)) : [],
+      owned:{...fresh.owned,...(s.owned || {})}
+    };
+  } catch {
+    return freshState();
+  }
+}
+
+let state = loadState();
+let currentMission = null;
+let toastTimer;
+
+const $ = id => document.getElementById(id);
+
+function save() {
+  try {
+    localStorage.setItem("blacknetSave",JSON.stringify(state));
+  } catch {
+    showToast("저장 공간을 사용할 수 없습니다.");
+  }
+}
+
+function level() {
+  return 1 + Math.floor(state.xp / 100);
+}
+
+function rankName() {
+  const lv = level();
+  if (lv >= 8) return "전설";
+  if (lv >= 5) return "엘리트";
+  if (lv >= 3) return "숙련";
+  return "신입";
+}
+
+function log(message) {
+  const el = $("activityLog");
+  const line = document.createElement("div");
+  line.textContent = "[" + new Date().toLocaleTimeString("ko-KR") + "] " + message;
+  el.prepend(line);
+  while (el.children.length > 6) el.lastChild.remove();
+}
+
+function showToast(message) {
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add("hidden"),2400);
+}
+
+function renderStats() {
+  $("level").textContent = level();
+  $("money").textContent = state.money.toLocaleString("ko-KR");
+  $("xp").textContent = state.xp;
+  $("solved").textContent = state.solved.length;
+  $("xpBar").style.width = (state.xp % 100) + "%";
+  $("rank").textContent = rankName();
+  $("nextLevel").textContent = (100 - state.xp % 100) + " XP 필요";
+  $("toolOwned").textContent = "보유: " + state.owned.tool + "개";
+  $("deviceOwned").textContent = "보유: " + state.owned.device + "개";
+  $("securityOwned").textContent = "보유: " + state.owned.security + "개";
+  $("daily").textContent = state.dailyClaimed
+    ? "오늘의 보너스 수령 완료"
+    : "접속 보너스 받기 (+50 N₩)";
+}
+
+function renderMissions() {
+  $("missionList").replaceChildren();
+
+  missions.forEach(m => {
+    const done = state.solved.includes(m.id);
+    const card = document.createElement("div");
+    card.className = "mission";
+
+    const top = document.createElement("div");
+    top.className = "mission-top";
+
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = m.difficulty;
+
+    const reward = document.createElement("span");
+    reward.className = "reward";
+    reward.textContent = done ? "✓ 완료" : "+" + m.reward + " N₩ · +" + m.xp + " XP";
+
+    top.append(tag,reward);
+
+    const title = document.createElement("h3");
+    title.textContent = m.title;
+
+    const desc = document.createElement("p");
+    desc.textContent = m.description;
+
+    const btn = document.createElement("button");
+    btn.className = "btn small";
+    btn.textContent = done ? "미션 완료" : "작전 시작";
+    btn.disabled = done;
+    btn.addEventListener("click",() => startMission(m.id));
+
+    card.append(top,title,desc,btn);
+    $("missionList").append(card);
+  });
+}
+
+function startMission(id) {
+  const m = missions.find(item => item.id === id);
+  if (!m || state.solved.includes(id)) return;
+
+  currentMission = m;
+  $("missionArea").classList.add("active");
+  $("missionCode").textContent = "MISSION_" + String(id).padStart(2,"0");
+  $("question").textContent = m.question;
+  $("puzzle").textContent = m.puzzle;
+  $("answer").value = "";
+  $("feedback").textContent = "";
+  $("feedback").className = "feedback";
+  $("submitAnswer").disabled = false;
+  $("answer").disabled = false;
+  $("answer").focus();
+
+  log("미션 " + id + " 작전을 시작했습니다.");
+  $("missionArea").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function submitAnswer() {
+  if (!currentMission || $("submitAnswer").disabled) return;
+
+  const answer = $("answer").value.trim().toLowerCase();
+  const feedback = $("feedback");
+
+  if (!answer) {
+    feedback.textContent = "정답을 먼저 입력하세요.";
+    feedback.className = "feedback bad";
+    return;
+  }
+
+  if (answer !== currentMission.answer.toLowerCase()) {
+    feedback.textContent = "암호 해독 실패. 다시 분석해 보세요!";
+    feedback.className = "feedback bad";
+    log("미션 " + currentMission.id + " 암호 해독 실패.");
+    return;
+  }
+
+  const m = currentMission;
+  if (state.solved.includes(m.id)) return;
+
+  const oldLevel = level();
+  const bonusXP = state.owned.tool * 5;
+  const bonusMoney = state.owned.device * 20;
+
+  state.solved.push(m.id);
+  state.money += m.reward + bonusMoney;
+  state.xp += m.xp + bonusXP;
+
+  save();
+  renderStats();
+  renderMissions();
+
+  $("submitAnswer").disabled = true;
+  $("answer").disabled = true;
+  feedback.textContent = "해독 성공! +" + (m.reward + bonusMoney) +
+    " N₩ · +" + (m.xp + bonusXP) + " XP";
+  feedback.className = "feedback good";
+
+  log("미션 " + m.id + " 성공! 보상을 획득했습니다.");
+  showToast("미션 성공! 보상을 획득했습니다.");
+
+  if (level() > oldLevel) {
+    showToast("레벨 업! 현재 레벨 " + level());
+    log("레벨 업! 현재 레벨 " + level());
+  }
+
+  currentMission = null;
+}
+
+$("submitAnswer").addEventListener("click",submitAnswer);
+$("answer").addEventListener("keydown",e => {
+  if (e.key === "Enter") submitAnswer();
+});
+
+$("closeMission").addEventListener("click",() => {
+  currentMission = null;
+  $("missionArea").classList.remove("active");
+});
+
+const shop = {
+  tool:{name:"암호 해독 도구",price:80},
+  device:{name:"고성능 단말기",price:150},
+  security:{name:"보안 업그레이드",price:250}
+};
+
+document.querySelectorAll("[data-item]").forEach(btn => {
+  btn.addEventListener("click",() => {
+    const key = btn.dataset.item;
+    const item = shop[key];
+    if (!item) return;
+
+    if (state.money < item.price) {
+      showToast("자금이 부족합니다!");
+      return;
+    }
+
+    state.money -= item.price;
+    state.owned[key] = Number(state.owned[key] || 0) + 1;
+
+    save();
+    renderStats();
+    log(item.name + " 장비를 구매했습니다.");
+    showToast(item.name + " 구매 완료!");
+  });
+});
+
+$("daily").addEventListener("click",() => {
+  if (state.dailyClaimed) {
+    showToast("오늘의 보너스를 이미 받았습니다.");
+    return;
+  }
+
+  state.dailyClaimed = true;
+  state.money += 50;
+  save();
+  renderStats();
+  log("접속 보너스 50 N₩를 받았습니다.");
+  showToast("접속 보너스 +50 N₩!");
+});
+
+$("saveReset").addEventListener("click",() => {
+  if (!confirm("정말 모든 진행 상황을 초기화할까요? 복구할 수 없습니다.")) return;
+
+  state = freshState();
+  currentMission = null;
+  $("missionArea").classList.remove("active");
+  save();
+  renderStats();
+  renderMissions();
+  $("activityLog").replaceChildren();
+  log("진행 상황이 초기화되었습니다.");
+  showToast("초기화 완료");
+});
+
+function typeText() {
+  const message = "접속 확인... 요원 인증 완료. 첫 번째 미션을 선택하세요.";
+  let i = 0;
+  const el = $("typing");
+
+  const timer = setInterval(() => {
+    el.textContent = message.slice(0,++i);
+    if (i >= message.length) clearInterval(timer);
+  },38);
+}
+
+function init() {
+  renderStats();
+  renderMissions();
+  typeText();
+}
+
+init();
+</script>
+</body>
+</html>
